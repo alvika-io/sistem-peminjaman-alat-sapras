@@ -1,0 +1,141 @@
+/* =======================
+   RESET & FONT
+======================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #e6f7ff; /* biru muda, beda dengan admin */
+    color: #1f2937;
+}
+
+/* =======================
+   NAVBAR
+======================= */
+.navbar {
+    height: 60px;
+    width: 100%;
+    background-color: #0ea5e9; /* biru terang petugas */
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.brand {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.btn-logout {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-logout:hover {
+    background: #dc2626;
+}
+
+/* =======================
+   MAIN LAYOUT
+======================= */
+.main-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =======================
+   SIDEBAR
+======================= */
+.sidebar {
+    width: 220px;
+    background-color: #0284c7; /* biru gelap tapi beda dengan admin */
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 12px;
+}
+
+.sidebar-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #e0f2fe; /* warna terang */
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background-color: #0369a1;
+}
+
+/* =======================
+   CONTENT AREA
+======================= */
+.content {
+    flex: 1;
+    padding: 25px;
+}
+
+/* Page title */
+.page-title {
+    margin-bottom: 20px;
+}
+
+.page-title h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* =======================
+   CARD
+======================= */
+.card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
