@@ -9,7 +9,7 @@
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 
 <style>
-    /* UPGRADE DATA TABLES UI ADMIN */
+    /* UPGRADE DATA TABLES UI PEMINJAM (EMERALD THEME) */
     .dataTables_wrapper .dataTables_length select {
         border-radius: 12px;
         padding: 5px 10px;
@@ -29,7 +29,7 @@
     table.dataTable.no-footer { border-bottom: 1px solid #f1f5f9 !important; }
     .dataTables_wrapper .dataTables_info { font-size: 11px; font-weight: 700; color: #94a3b8 !important; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 20px; }
     
-    /* Pagination Premium Styling */
+    /* Pagination Emerald Styling */
     .dataTables_wrapper .dataTables_paginate { padding-top: 20px; }
     .dataTables_wrapper .dataTables_paginate .paginate_button {
         border-radius: 12px !important;
@@ -40,16 +40,16 @@
         padding: 8px 16px !important;
     }
     .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        background: #2563eb !important; /* Blue-600 */
+        background: #10b981 !important; /* Emerald-500 */
         color: white !important;
-        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
     }
     .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        background: #f1f5f9 !important;
-        color: #2563eb !important;
+        background: #f0fdf4 !important;
+        color: #10b981 !important;
     }
 
-    /* SWEETALERT PREMIUM RADIUS (MATCH SIPRAS UI) */
+    /* SWEETALERT PREMIUM RADIUS (MATCH PEMINJAM UI) */
     .sipras-swal-popup { border-radius: 2.5rem !important; padding: 2.5rem !important; }
     .sipras-swal-confirm { border-radius: 1.25rem !important; padding: 14px 40px !important; font-weight: 800 !important; text-transform: uppercase; font-size: 11px !important; letter-spacing: 0.1em !important; margin: 5px !important; }
     .sipras-swal-cancel { border-radius: 1.25rem !important; padding: 14px 40px !important; font-weight: 800 !important; text-transform: uppercase; font-size: 11px !important; letter-spacing: 0.1em !important; background-color: #f1f5f9 !important; color: #64748b !important; margin: 5px !important; }
@@ -58,7 +58,7 @@
 <script>
     $(document).ready(function () {
         // ==========================
-        // MODERN DATATABLES (ADMIN VERSION)
+        // MODERN DATATABLES (PEMINJAM VERSION)
         // ==========================
         $('.datatable').DataTable({
             pageLength: 10,
@@ -67,7 +67,7 @@
             searching: true,
             language: {
                 search: "_INPUT_",
-                searchPlaceholder: "Cari data...",
+                searchPlaceholder: "Cari riwayat...",
                 lengthMenu: "_MENU_",
                 info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                 paginate: {
@@ -77,7 +77,7 @@
             }
         });
 
-        // Mixin Konfigurasi SweetAlert Sipras
+        // Mixin Konfigurasi SweetAlert Sipras Peminjam
         const SiprasAlert = Swal.mixin({
             customClass: {
                 popup: 'sipras-swal-popup',
@@ -97,14 +97,14 @@
                 text: "{{ session('success') }}",
                 timer: 2500,
                 showConfirmButton: false,
-                iconColor: '#2563eb'
+                iconColor: '#10b981'
             });
         @endif
 
         @if (session('error'))
             SiprasAlert.fire({
                 icon: 'error',
-                title: 'Terjadi Kesalahan',
+                title: 'Gagal',
                 text: "{{ session('error') }}",
                 confirmButtonText: 'Tutup',
                 confirmButtonColor: '#ef4444'
@@ -112,19 +112,19 @@
         @endif
 
         // ==========================
-        // KONFIRMASI HAPUS
+        // KONFIRMASI HAPUS (Jika ada)
         // ==========================
         $(document).on('submit', '.form-delete', function (e) {
             e.preventDefault();
             let form = this;
 
             SiprasAlert.fire({
-                title: 'Hapus Data?',
-                text: 'Data yang dihapus tidak dapat dipulihkan kembali!',
+                title: 'Batalkan Pengajuan?',
+                text: 'Aksi ini akan menghapus data pengajuan peminjaman Anda.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Ya, Hapus',
-                cancelButtonText: 'Batalkan',
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Kembali',
                 confirmButtonColor: '#ef4444'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -134,21 +134,21 @@
         });
 
         // ==========================
-        // KONFIRMASI SIMPAN / UPDATE
+        // KONFIRMASI SIMPAN / AJUKAN
         // ==========================
         $(document).on('submit', '.form-confirm', function (e) {
             e.preventDefault();
             let form = this;
-            let message = $(this).data('message') ?? 'Yakin ingin melanjutkan aksi ini?';
+            let message = $(this).data('message') ?? 'Yakin ingin mengirim pengajuan peminjaman ini?';
 
             SiprasAlert.fire({
-                title: 'Konfirmasi',
+                title: 'Kirim Pengajuan?',
                 text: message,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Lanjutkan',
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#2563eb'
+                confirmButtonText: 'Ya, Kirim',
+                cancelButtonText: 'Cek Kembali',
+                confirmButtonColor: '#10b981'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

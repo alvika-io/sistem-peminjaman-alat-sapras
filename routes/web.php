@@ -4,17 +4,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 
 // ================= ADMIN =================
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\AlatController;
-use App\Http\Controllers\Admin\LogAktivitasController; // <--- TAMBAHAN
+use App\Http\Controllers\Admin\LogAktivitasController;
 
 // ================= PETUGAS =================
+use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 use App\Http\Controllers\Petugas\PeminjamanController as PetugasPeminjamanController;
 use App\Http\Controllers\Petugas\PengembalianController as PetugasPengembalianController;
 use App\Http\Controllers\Petugas\LaporanController;
 
 // ================= PEMINJAM =================
+use App\Http\Controllers\Peminjam\DashboardController as PeminjamDashboardController;
 use App\Http\Controllers\Peminjam\PeminjamanController as PeminjamPeminjamanController;
 
 Route::get('/', function () {
@@ -31,7 +34,8 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', fn () => view('admin.dashboard'))
+        // Dashboard Admin (Sekarang menggunakan Controller)
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
 
         Route::resource('users', UserController::class);
@@ -53,7 +57,8 @@ Route::middleware(['auth', 'role:petugas'])
     ->name('petugas.')
     ->group(function () {
 
-        Route::get('/dashboard', fn () => view('petugas.dashboard'))
+        // Dashboard Petugas (Sekarang menggunakan Controller)
+        Route::get('/dashboard', [PetugasDashboardController::class, 'index'])
             ->name('dashboard');
 
         // ===== PEMINJAMAN =====
@@ -100,7 +105,8 @@ Route::middleware(['auth', 'role:peminjam'])
     ->name('peminjam.')
     ->group(function () {
 
-        Route::get('/dashboard', fn () => view('peminjam.dashboard'))
+        // Dashboard Peminjam (Sekarang menggunakan Controller)
+        Route::get('/dashboard', [PeminjamDashboardController::class, 'index'])
             ->name('dashboard');
 
         Route::get('/peminjaman', [PeminjamPeminjamanController::class, 'index'])
