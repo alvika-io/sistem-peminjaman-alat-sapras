@@ -15,6 +15,7 @@ use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardControll
 use App\Http\Controllers\Petugas\PeminjamanController as PetugasPeminjamanController;
 use App\Http\Controllers\Petugas\PengembalianController as PetugasPengembalianController;
 use App\Http\Controllers\Petugas\LaporanController;
+use App\Http\Controllers\Petugas\DendaSettingController; // <--- Namespace Baru
 
 // ================= PEMINJAM =================
 use App\Http\Controllers\Peminjam\DashboardController as PeminjamDashboardController;
@@ -34,7 +35,7 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
-        // Dashboard Admin (Sekarang menggunakan Controller)
+        // Dashboard Admin
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
 
@@ -57,7 +58,7 @@ Route::middleware(['auth', 'role:petugas'])
     ->name('petugas.')
     ->group(function () {
 
-        // Dashboard Petugas (Sekarang menggunakan Controller)
+        // Dashboard Petugas
         Route::get('/dashboard', [PetugasDashboardController::class, 'index'])
             ->name('dashboard');
 
@@ -93,6 +94,13 @@ Route::middleware(['auth', 'role:petugas'])
 
         Route::get('/laporan/pengembalian/cetak', [LaporanController::class, 'cetak'])
             ->name('laporan.pengembalian.cetak');
+
+        // ===== PENGATURAN DENDA =====
+        Route::get('/pengaturan-denda', [DendaSettingController::class, 'index'])
+            ->name('denda.index');
+
+        Route::put('/pengaturan-denda', [DendaSettingController::class, 'update'])
+            ->name('denda.update');
     });
 
 /*
@@ -105,7 +113,7 @@ Route::middleware(['auth', 'role:peminjam'])
     ->name('peminjam.')
     ->group(function () {
 
-        // Dashboard Peminjam (Sekarang menggunakan Controller)
+        // Dashboard Peminjam
         Route::get('/dashboard', [PeminjamDashboardController::class, 'index'])
             ->name('dashboard');
 

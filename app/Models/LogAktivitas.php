@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// TAMBAHKAN INI AGAR RELASI TERBACA
+use App\Models\Peminjaman;
+use App\Models\User;
 
 class LogAktivitas extends Model
 {
@@ -25,6 +28,7 @@ class LogAktivitas extends Model
 
     public function peminjaman()
     {
+        // Pastikan Peminjaman sudah di-import di atas
         return $this->belongsTo(Peminjaman::class);
     }
 }

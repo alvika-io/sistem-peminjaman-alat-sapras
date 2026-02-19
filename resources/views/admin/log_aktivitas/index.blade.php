@@ -53,7 +53,7 @@
             letter-spacing: 0.1em;
             font-weight: 800;
             padding: 1.25rem 1rem;
-            position: sticky; /* Header tabel nempel saat scroll */
+            position: sticky;
             top: 0;
             z-index: 10;
         }
@@ -77,9 +77,9 @@
         <main class="p-8 lg:p-12">
             
             <div class="mb-10">
-                <div class="flex items-center gap-3 mb-2">
+                <div class="flex items-center gap-3 mb-2 text-blue-600">
                     <span class="h-1 w-8 bg-blue-600 rounded-full"></span>
-                    <span class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em]">Monitoring System</span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.3em]">Monitoring System</span>
                 </div>
                 <h1 class="text-4xl font-black text-gray-900 tracking-tighter">Log Aktivitas</h1>
                 <p class="text-gray-500 font-medium mt-1">Rekam jejak seluruh transaksi peminjaman alat sapras.</p>
@@ -101,8 +101,10 @@
                         <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Status Pinjam</label>
                         <select name="status" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-100">
                             <option value="">Semua Status</option>
-                            <option value="dipinjam" {{ request('status')=='dipinjam' ? 'selected' : '' }}>Dipinjam</option>
-                            <option value="selesai" {{ request('status')=='selesai' ? 'selected' : '' }}>Selesai</option>
+                            {{-- SINKRONISASI VALUE FILTER DENGAN DATABASE --}}
+                            <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                            <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
                         </select>
                     </div>
 
@@ -122,7 +124,7 @@
                     <table id="logTable" class="w-full text-left sipras-table">
                         <thead>
                             <tr>
-                                <th class="w-12 text-center">No</th>
+                                <th class="w-12 text-center">ID</th>
                                 <th>Pengguna</th>
                                 <th>Alat Sapras</th>
                                 <th>Tgl Pinjam</th>
@@ -134,7 +136,7 @@
                         <tbody class="text-sm font-medium text-gray-600">
                             @foreach($logs as $log)
                             <tr>
-                                <td class="py-5 text-center font-bold text-gray-400">{{ $loop->iteration }}</td>
+                                <td class="py-5 text-center font-bold text-gray-400">{{ $log->id }}</td>
                                 <td class="py-5">
                                     <div class="flex flex-col">
                                         <span class="text-gray-900 font-black tracking-tight">{{ $log->user->name }}</span>
@@ -143,8 +145,8 @@
                                 </td>
                                 <td class="py-5">
                                     <span class="text-gray-700 font-bold">
-                                        @if($log->peminjaman && $log->peminjaman->alats)
-                                            {{ $log->peminjaman->alats->pluck('nama')->join(', ') }}
+                                        @if($log->peminjaman && $log->peminjaman->alats->count() > 0)
+                                            {{ $log->peminjaman->alats->pluck('nama')->implode(', ') }}
                                         @else
                                             <span class="text-gray-300 italic">-</span>
                                         @endif
@@ -155,8 +157,14 @@
                                     {{ $log->tanggal_kembali ? \Carbon\Carbon::parse($log->tanggal_kembali)->format('d/m/Y') : '-' }}
                                 </td>
                                 <td class="py-5">
+                                    {{-- UPGRADE BADGE STATUS DINAMIS --}}
                                     @php
-                                        $statusClass = $log->status == 'dipinjam' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-green-50 text-green-600 border-green-100';
+                                        $statusClass = match($log->status) {
+                                            'disetujui' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                            'ditolak'   => 'bg-red-50 text-red-600 border-red-100',
+                                            'selesai'   => 'bg-gray-50 text-gray-500 border-gray-200',
+                                            default     => 'bg-blue-50 text-blue-600 border-blue-100',
+                                        };
                                     @endphp
                                     <span class="px-3 py-1.5 border rounded-lg text-[10px] font-black uppercase tracking-widest {{ $statusClass }}">
                                         {{ $log->status }}
@@ -185,13 +193,12 @@
 
 <script>
 $(document).ready(function() {
-    // Inisialisasi DataTable dengan style SIPRAS yang sudah diupgrade di admin-scripts
     $('#logTable').DataTable({
         "paging": true,
         "searching": true,
         "ordering": true,
         "info": true,
-        "order": [[ 0, "desc" ]],
+        "order": [[ 0, "desc" ]], // Terbaru muncul di atas
         "language": {
             "search": "",
             "searchPlaceholder": "Cari data log...",

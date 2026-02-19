@@ -89,7 +89,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     </div>
                     <p class="font-black text-gray-800 text-sm tracking-tight uppercase">Monitoring Real-time</p>
-                    <p class="text-[11px] text-gray-400 font-medium">Cek stok & kategori alat langsung dari perangkat Anda.</p>
+                    <p class="text-[11px] text-gray-400 font-medium">Cek stok alat langsung dari perangkat Anda.</p>
                 </div>
                 
                 <div class="group p-4 bg-gray-50 rounded-[2rem] border border-transparent hover:border-emerald-100 hover:bg-white transition-all">
@@ -97,7 +97,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <p class="font-black text-gray-800 text-sm tracking-tight uppercase">Denda Transparan</p>
-                    <p class="text-[11px] text-gray-400 font-medium">Sistem hitung denda otomatis & status pelunasan terdata.</p>
+                    <p class="text-[11px] text-gray-400 font-medium">Sistem hitung denda status pelunasan terdata.</p>
                 </div>
             </div>
 
