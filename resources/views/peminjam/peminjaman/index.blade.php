@@ -83,7 +83,7 @@
                 </div>
 
                 <a href="{{ route('peminjam.peminjaman.create') }}" 
-                   class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-xl shadow-emerald-100 transition-all transform hover:-translate-y-1 active:scale-95 text-sm uppercase tracking-widest">
+                    class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-xl shadow-emerald-100 transition-all transform hover:-translate-y-1 active:scale-95 text-sm uppercase tracking-widest">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
                     <span>Ajukan Pinjaman</span>
                 </a>
@@ -106,15 +106,15 @@
                             @forelse ($peminjamans as $peminjaman)
                             <tr>
                                 <td class="py-5 text-center font-bold text-gray-400">{{ $loop->iteration }}</td>
-                                <td class="py-5">
+                                <td class="py-5 text-nowrap">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center gap-2">
                                             <span class="text-[10px] font-bold text-gray-400 uppercase">Pinjam:</span>
-                                            <span class="font-mono text-xs text-gray-800">{{ $peminjaman->tanggal_pinjam }}</span>
+                                            <span class="font-bold text-xs text-gray-800">{{ $peminjaman->tanggal_pinjam->format('d/m/Y') }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <span class="text-[10px] font-bold text-gray-400 uppercase">Kembali:</span>
-                                            <span class="font-mono text-xs text-emerald-600">{{ $peminjaman->tanggal_kembali }}</span>
+                                            <span class="font-bold text-xs text-emerald-600">{{ $peminjaman->tanggal_kembali->format('d/m/Y') }}</span>
                                         </div>
                                     </div>
                                 </td>
@@ -129,29 +129,43 @@
                                 </td>
 
                                 <td class="py-5 text-center">
-                                    @switch($peminjaman->status)
-                                        @case('pending')
-                                            <span class="px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl text-[10px] font-black uppercase tracking-widest italic animate-pulse">Menunggu</span>
-                                            @break
-                                        @case('disetujui')
-                                            <span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-[10px] font-black uppercase tracking-widest italic">Dipinjam</span>
-                                            @break
-                                        @case('selesai')
-                                            <span class="px-3 py-1.5 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl text-[10px] font-black uppercase tracking-widest italic">Dikembalikan</span>
-                                            @break
-                                        @case('ditolak')
-                                            <span class="px-3 py-1.5 bg-red-50 text-red-600 border border-red-100 rounded-xl text-[10px] font-black uppercase tracking-widest italic">Ditolak</span>
-                                            @break
-                                        @default
-                                            <span class="text-gray-300">-</span>
-                                    @endswitch
+                                    <div class="flex flex-col items-center gap-2">
+                                        @switch($peminjaman->status)
+                                            @case('pending')
+                                                <span class="px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl text-[10px] font-black uppercase tracking-widest italic animate-pulse">Menunggu</span>
+                                                @break
+                                            @case('disetujui')
+                                                <span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-[10px] font-black uppercase tracking-widest italic">Dipinjam</span>
+                                                @break
+                                            @case('selesai')
+                                                <span class="px-3 py-1.5 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl text-[10px] font-black uppercase tracking-widest italic">Dikembalikan</span>
+                                                @break
+                                            @case('ditolak')
+                                                <span class="px-3 py-1.5 bg-red-50 text-red-600 border border-red-100 rounded-xl text-[10px] font-black uppercase tracking-widest italic">Ditolak</span>
+                                                
+                                                {{-- Upgrade Tampilan Alasan Penolakan --}}
+                                                @if($peminjaman->alasan_penolakan)
+                                                    <div class="flex items-start gap-1.5 px-3 py-2 bg-red-50/50 rounded-xl border border-dashed border-red-200 mt-1 max-w-[180px]">
+                                                        <svg class="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                        </svg>
+                                                        <p class="text-[10px] font-bold text-red-700 leading-snug text-left">
+                                                            {{ $peminjaman->alasan_penolakan }}
+                                                        </p>
+                                                    </div>
+                                                @endif
+                                                @break
+                                            @default
+                                                <span class="text-gray-300">-</span>
+                                        @endswitch
+                                    </div>
                                 </td>
 
                                 <td class="py-5 text-center font-black">
                                     @if ($peminjaman->status === 'ditolak')
                                         <span class="text-gray-300 line-through">N/A</span>
                                     @elseif ($peminjaman->pengembalian && $peminjaman->pengembalian->denda > 0)
-                                        <span class="text-red-500">Rp {{ number_format($peminjaman->pengembalian->denda, 0, ',', '.') }}</span>
+                                        <span class="text-red-500 text-nowrap">Rp {{ number_format($peminjaman->pengembalian->denda, 0, ',', '.') }}</span>
                                     @else
                                         <span class="text-gray-300">-</span>
                                     @endif

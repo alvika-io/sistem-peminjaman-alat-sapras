@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Peminjaman;
 use App\Models\Alat;
 use App\Models\LogAktivitas;
+use App\Models\AlasanPenolakan; // <--- Import Model Alasan
 
 class PeminjamanController extends Controller
 {
@@ -24,13 +25,18 @@ class PeminjamanController extends Controller
     public function show(Peminjaman $peminjaman)
     {
         $peminjaman->load(['user', 'alats']);
-        return view('petugas.peminjaman.show', compact('peminjaman'));
+        
+        // Ambil semua daftar alasan untuk pilihan dropdown di view
+        $alasans = AlasanPenolakan::all(); 
+        
+        return view('petugas.peminjaman.show', compact('peminjaman', 'alasans'));
     }
 
     public function updateStatus(Request $request, Peminjaman $peminjaman)
     {
         $request->validate([
-            'status' => 'required|in:pending,disetujui,ditolak,selesai'
+            'status' => 'required|in:pending,disetujui,ditolak,selesai',
+            'alasan_penolakan' => 'required_if:status,ditolak' // Validasi: wajib ada kalau statusnya ditolak
         ]);
 
         $statusLama = $peminjaman->status;
@@ -63,9 +69,11 @@ class PeminjamanController extends Controller
             }
         }
 
-        // UPDATE STATUS
+        // UPDATE STATUS & ALASAN
         $peminjaman->update([
-            'status' => $statusBaru
+            'status' => $statusBaru,
+            // Jika ditolak simpan alasannya, jika disetujui hapus alasan lamanya (reset)
+            'alasan_penolakan' => $statusBaru === 'ditolak' ? $request->alasan_penolakan : null
         ]);
 
         // 🔥 SIMPAN LOG AKTIVITAS

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Peminjaman;
 use App\Models\Alat;
+use App\Models\Keranjang; // Tambahkan ini agar tidak error
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -65,6 +66,7 @@ class PeminjamanController extends Controller
 
             // 3. Simpan relasi alat ke tabel pivot (peminjaman_alat)
             $anyAlatSaved = false;
+            $selectedAlatIds = []; // Simpan ID alat yang diproses untuk hapus keranjang nanti
 
             foreach ($request->alat_id as $index => $alatId) {
                 // Ambil jumlah yang sejajar dengan index alat yang dicentang
@@ -74,6 +76,7 @@ class PeminjamanController extends Controller
                     $peminjaman->alats()->attach($alatId, [
                         'jumlah' => $qty
                     ]);
+                    $selectedAlatIds[] = $alatId; // Masukkan ke list hapus
                     $anyAlatSaved = true;
                 }
             }
@@ -84,11 +87,17 @@ class PeminjamanController extends Controller
                 return back()->withErrors(['error' => 'Gagal: Anda harus memasukkan jumlah minimal 1 untuk alat yang dipilih.'])->withInput();
             }
 
+            // 4. HAPUS DARI KERANJANG
+            // Menghapus hanya alat yang baru saja diajukan peminjamannya
+            Keranjang::where('user_id', Auth::id())
+                ->whereIn('alat_id', $selectedAlatIds)
+                ->delete();
+
             DB::commit();
 
             return redirect()
                 ->route('peminjam.peminjaman.index')
-                ->with('success', 'Pengajuan peminjaman berhasil dikirim.');
+                ->with('success', 'Pengajuan peminjaman berhasil dikirim dan keranjang telah diperbarui.');
 
         } catch (\Exception $e) {
             DB::rollBack();

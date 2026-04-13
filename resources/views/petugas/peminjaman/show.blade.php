@@ -9,47 +9,40 @@
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
 
     <style>
-        /* Mencegah scroll di body utama */
         body, html { 
-            height: 100%; 
-            margin: 0; 
-            overflow: hidden; 
+            height: 100%; margin: 0; overflow: hidden; 
             font-family: 'Instrument Sans', sans-serif; 
             background-color: #f8fafc; 
         }
-
-        /* Wrapper utama setinggi layar penuh */
-        .main-wrapper { 
-            display: flex; 
-            height: 100vh; 
-            width: 100%;
-        }
-
-        /* Sidebar tetap diam di kiri */
-        .sidebar-wrapper {
-            height: 100vh;
-            flex-shrink: 0;
-            z-index: 50;
-        }
-
-        /* Area konten yang bisa di-scroll secara mandiri */
-        .content-area { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            overflow-y: auto; 
-            min-width: 0; 
-            scroll-behavior: smooth;
-        }
+        .main-wrapper { display: flex; height: 100vh; width: 100%; }
+        .sidebar-wrapper { height: 100vh; flex-shrink: 0; z-index: 50; }
+        .content-area { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; min-width: 0; scroll-behavior: smooth; }
         
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 99px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+        .status-badge { padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
+        
+        /* Modern Dropdown Styling inside SweetAlert */
+        .swal-select-premium {
+            width: 100%;
+            padding: 14px 20px !important;
+            border-radius: 1.5rem !important;
+            border: 2px solid #f1f5f9 !important;
+            background-color: #f8fafc !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            color: #1e293b !important;
+            outline: none !important;
+            margin-top: 15px !important;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        .swal-select-premium:focus {
+            border-color: #ef4444 !important;
+            background-color: #fff !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
         }
     </style>
 </head>
@@ -85,7 +78,7 @@
                         <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6 italic underline underline-offset-8 decoration-indigo-100">Informasi Peminjam</h3>
                         
                         <div class="flex items-center gap-4 mb-8">
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-sm">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-sm uppercase">
                                 {{ substr($peminjaman->user->name ?? '?', 0, 2) }}
                             </div>
                             <div>
@@ -107,19 +100,29 @@
                                     @case('selesai')
                                         <span class="status-badge bg-green-50 text-green-600">Selesai Kembali</span>
                                         @break
+                                    @case('ditolak')
+                                        <span class="status-badge bg-red-50 text-red-600">Pengajuan Ditolak</span>
+                                        @break
                                     @default
-                                        <span class="status-badge bg-red-50 text-red-600">{{ $peminjaman->status }}</span>
+                                        <span class="status-badge bg-gray-50 text-gray-600">{{ $peminjaman->status }}</span>
                                 @endswitch
                             </div>
+
+                            @if($peminjaman->alasan_penolakan)
+                            <div class="p-4 bg-red-50/50 rounded-2xl border border-red-100">
+                                <p class="text-[9px] font-black text-red-400 uppercase tracking-widest mb-1 italic">Keterangan Penolakan</p>
+                                <p class="text-xs font-bold text-red-600 leading-relaxed">{{ $peminjaman->alasan_penolakan }}</p>
+                            </div>
+                            @endif
                             
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Tgl Pinjam</p>
-                                    <p class="text-xs font-bold text-gray-800">{{ $peminjaman->tanggal_pinjam }}</p>
+                                    <p class="text-xs font-bold text-gray-800">{{ $peminjaman->tanggal_pinjam->format('d/m/Y') }}</p>
                                 </div>
                                 <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Tgl Kembali</p>
-                                    <p class="text-xs font-bold text-gray-800">{{ $peminjaman->tanggal_kembali }}</p>
+                                    <p class="text-xs font-bold text-gray-800">{{ $peminjaman->tanggal_kembali->format('d/m/Y') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -170,18 +173,19 @@
 
                         @if($peminjaman->status === 'pending')
                         <div class="mt-10 flex flex-col sm:flex-row gap-3">
-                            <form action="{{ route('petugas.peminjaman.updateStatus', $peminjaman->id) }}" method="POST" class="flex-1">
+                            <form id="form-setuju" action="{{ route('petugas.peminjaman.updateStatus', $peminjaman->id) }}" method="POST" class="flex-1">
                                 @csrf @method('PATCH')
                                 <input type="hidden" name="status" value="disetujui">
-                                <button type="submit" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-100 uppercase tracking-widest text-[10px]">
+                                <button type="button" onclick="konfirmasiSetuju()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-100 uppercase tracking-widest text-[10px]">
                                     Setujui Peminjaman
                                 </button>
                             </form>
                             
-                            <form action="{{ route('petugas.peminjaman.updateStatus', $peminjaman->id) }}" method="POST" class="flex-1">
+                            <form id="form-tolak" action="{{ route('petugas.peminjaman.updateStatus', $peminjaman->id) }}" method="POST" class="flex-1">
                                 @csrf @method('PATCH')
                                 <input type="hidden" name="status" value="ditolak">
-                                <button type="submit" class="w-full py-4 bg-white border border-red-100 hover:bg-red-50 text-red-500 font-black rounded-2xl transition-all uppercase tracking-widest text-[10px]">
+                                <input type="hidden" name="alasan_penolakan" id="input_alasan_hidden">
+                                <button type="button" onclick="konfirmasiTolak()" class="w-full py-4 bg-white border border-red-100 hover:bg-red-50 text-red-500 font-black rounded-2xl transition-all uppercase tracking-widest text-[10px]">
                                     Tolak Pengajuan
                                 </button>
                             </form>
@@ -205,5 +209,68 @@
 </div>
 
 @include('petugas.partials.scripts')
+
+<script>
+    function konfirmasiSetuju() {
+        Swal.fire({
+            title: 'Setujui Peminjaman?',
+            text: "Stok alat akan otomatis berkurang sesuai jumlah pinjam.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Setujui',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#4f46e5',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'sipras-swal-popup',
+                confirmButton: 'sipras-swal-confirm',
+                cancelButton: 'sipras-swal-cancel'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-setuju').submit();
+            }
+        });
+    }
+
+    function konfirmasiTolak() {
+        Swal.fire({
+            title: 'Tolak Pengajuan?',
+            text: "Pilih alasan penolakan secara resmi untuk peminjam.",
+            icon: 'warning',
+            iconColor: '#ef4444',
+            html: `
+                <select id="alasan_select" class="swal-select-premium">
+                    <option value="" disabled selected>-- Pilih Alasan Penolakan --</option>
+                    @foreach($alasans as $alasan)
+                        <option value="{{ $alasan->alasan }}">{{ $alasan->alasan }}</option>
+                    @endforeach
+                </select>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Tolak Sekarang',
+            cancelButtonText: 'Kembali',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'sipras-swal-popup',
+                confirmButton: 'sipras-swal-confirm bg-red-500 hover:bg-red-600',
+                cancelButton: 'sipras-swal-cancel'
+            },
+            preConfirm: () => {
+                const alasan = Swal.getPopup().querySelector('#alasan_select').value;
+                if (!alasan) {
+                    Swal.showValidationMessage(`Wajib pilih alasan penolakan!`)
+                }
+                return { alasan: alasan }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('input_alasan_hidden').value = result.value.alasan;
+                document.getElementById('form-tolak').submit();
+            }
+        });
+    }
+</script>
+
 </body>
-</html>
+</html> 

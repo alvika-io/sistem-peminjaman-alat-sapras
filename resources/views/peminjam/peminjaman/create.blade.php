@@ -10,7 +10,6 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        /* Mencegah scroll di body utama agar sidebar tidak ikut tergulung */
         body, html { 
             height: 100%; 
             margin: 0; 
@@ -19,21 +18,18 @@
             background-color: #f8fafc; 
         }
 
-        /* Wrapper utama setinggi layar monitor */
         .main-wrapper { 
             display: flex; 
             height: 100vh; 
             width: 100%;
         }
 
-        /* Sidebar Wrapper tetap diam di posisi kiri */
         .sidebar-wrapper {
             height: 100vh;
             flex-shrink: 0;
             z-index: 50;
         }
 
-        /* Area konten dengan scroll mandiri */
         .content-area { 
             flex: 1; 
             display: flex; 
@@ -47,19 +43,27 @@
         .form-input-custom { transition: all 0.3s ease; border: 1px solid #f1f5f9; }
         .form-input-custom:focus { border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
         
-        /* Emerald Selection Style */
         .tool-card-checkbox:checked + label { 
             border-color: #10b981; 
             background-color: #f0fdf4; 
             box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1);
         }
 
-        /* Custom Styling Flatpickr */
         .flatpickr-day.selected { background: #10b981 !important; border-color: #10b981 !important; }
         .flatpickr-calendar {
             border-radius: 1.5rem !important;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
             border: 1px solid #f1f5f9 !important;
+        }
+
+        /* Floating Cart Animation */
+        .cart-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
     </style>
 </head>
@@ -74,13 +78,15 @@
         @include('peminjam.partials.navbar')
 
         <main class="p-8 lg:p-12">
-            <div class="mb-10 text-center lg:text-left">
-                <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start text-emerald-600">
-                    <span class="h-1 w-8 bg-emerald-600 rounded-full"></span>
-                    <span class="text-[10px] font-black uppercase tracking-[0.3em]">New Request</span>
+            <div class="mb-10 text-center lg:text-left flex justify-between items-end">
+                <div>
+                    <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start text-emerald-600">
+                        <span class="h-1 w-8 bg-emerald-600 rounded-full"></span>
+                        <span class="text-[10px] font-black uppercase tracking-[0.3em]">New Request</span>
+                    </div>
+                    <h1 class="text-4xl font-black text-gray-900 tracking-tighter">Ajukan Peminjaman</h1>
+                    <p class="text-gray-500 font-medium mt-1 text-sm text-balance">Lengkapi detail peminjaman atau simpan alat ke keranjang untuk nanti.</p>
                 </div>
-                <h1 class="text-4xl font-black text-gray-900 tracking-tighter">Ajukan Peminjaman</h1>
-                <p class="text-gray-500 font-medium mt-1 text-sm text-balance">Lengkapi detail peminjaman dan pilih alat yang ingin digunakan.</p>
             </div>
 
             <form action="{{ route('peminjam.peminjaman.store') }}" method="POST" class="form-confirm space-y-8 pb-12">
@@ -133,10 +139,17 @@
                                         <span class="text-[9px] font-bold text-gray-400 uppercase">Stok: {{ $alat->stok_tersedia }}</span>
                                     </div>
                                 </div>
-                                <div class="flex items-center">
+                                <div class="flex items-center gap-2">
                                     <input type="number" name="jumlah[]" id="qty{{ $index }}" min="1" max="{{ $alat->stok_tersedia }}" 
                                            placeholder="0" disabled
-                                           class="w-16 px-2 py-2 bg-white border border-gray-200 rounded-xl outline-none focus:border-emerald-500 font-bold text-center text-xs disabled:opacity-30 transition-all">
+                                           class="w-14 px-2 py-2 bg-white border border-gray-200 rounded-xl outline-none focus:border-emerald-500 font-bold text-center text-xs disabled:opacity-30 transition-all">
+                                    
+                                    <button type="button" onclick="simpanKeKeranjang({{ $alat->id }}, {{ $index }}, event)" 
+                                            class="p-2.5 bg-white border border-gray-100 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </label>
                         </div>
@@ -145,7 +158,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-3xl shadow-xl transition-all uppercase tracking-[0.2em] text-xs transform hover:-translate-y-1">Kirim Pengajuan</button>
+                    <button type="submit" class="flex-1 py-5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-3xl shadow-xl transition-all uppercase tracking-[0.2em] text-xs transform hover:-translate-y-1">Kirim Pengajuan Langsung</button>
                     <a href="{{ route('peminjam.peminjaman.index') }}" class="flex-1 py-5 bg-white text-gray-400 font-bold rounded-3xl text-center border border-gray-100 uppercase tracking-widest text-xs transition-all hover:bg-gray-50">Batal</a>
                 </div>
             </form>
@@ -154,6 +167,20 @@
                 SIPRAS Member Portal &copy; 2026
             </p>
         </main>
+
+        <a href="{{ route('peminjam.keranjang.index') }}" class="fixed bottom-10 right-10 z-[60] cart-float group">
+            <div class="bg-white p-5 rounded-[2rem] shadow-[0_20px_50px_rgba(16,185,129,0.2)] border border-emerald-50 flex items-center gap-4 transition-all group-hover:pr-8">
+                <div class="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 118 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Cek Alat</span>
+                    <span class="text-sm font-black text-gray-900 tracking-tighter">Keranjang Saya</span>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 
@@ -173,6 +200,79 @@
         }
     }
 
+    // Fungsi Simpan ke Keranjang AJAX dengan SweetAlert Premium
+    function simpanKeKeranjang(alatId, index, event) {
+        event.preventDefault(); 
+        
+        const qtyInput = document.getElementById('qty' + index);
+        const jumlah = qtyInput.value;
+
+        if (!jumlah || jumlah < 1) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ops...',
+                text: 'Silahkan tentukan jumlah alat terlebih dahulu!',
+                confirmButtonColor: '#10b981',
+                customClass: { popup: 'sipras-swal-popup' }
+            });
+            qtyInput.focus();
+            return;
+        }
+
+        const btn = event.currentTarget;
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = `<svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke-width="2" stroke-linecap="round"/></svg>`;
+        btn.disabled = true;
+
+        fetch("{{ route('peminjam.keranjang.store') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                alat_id: alatId,
+                jumlah: jumlah
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Memanggil fungsi notifikasi modern dari partials/scripts
+            if (typeof tampilkanNotifKeranjang === "function") {
+                tampilkanNotifKeranjang();
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Alat berhasil masuk keranjang!',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    iconColor: '#10b981',
+                    customClass: { popup: 'sipras-swal-popup' }
+                });
+            }
+            
+            // Reset input
+            qtyInput.value = '';
+            qtyInput.disabled = true;
+            document.getElementById('alat' + alatId).checked = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: 'Terjadi kesalahan saat menyimpan ke keranjang.',
+                confirmButtonColor: '#10b981',
+                customClass: { popup: 'sipras-swal-popup' }
+            });
+        })
+        .finally(() => {
+            btn.innerHTML = originalIcon;
+            btn.disabled = false;
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const commonConfig = {
             locale: "id",
@@ -186,7 +286,9 @@
         const pinjamPicker = flatpickr("#tanggal_pinjam", {
             ...commonConfig,
             onChange: function(selectedDates, dateStr) {
-                kembaliPicker.set('minDate', dateStr);
+                if (typeof kembaliPicker !== 'undefined') {
+                    kembaliPicker.set('minDate', dateStr);
+                }
             }
         });
 

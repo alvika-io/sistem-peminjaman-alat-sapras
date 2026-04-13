@@ -88,6 +88,42 @@
         });
 
         // ==========================
+        // FUNGSI GLOBAL (WINDOW)
+        // ==========================
+
+        // 1. Notifikasi Keranjang Berhasil (Sukses)
+        window.tampilkanNotifKeranjang = function() {
+            SiprasAlert.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: 'Alat berhasil masuk keranjang!',
+                timer: 2000,
+                showConfirmButton: false,
+                timerProgressBar: true,
+                iconColor: '#10b981'
+            });
+        }
+
+        // 2. Konfirmasi Hapus Item dari Keranjang (Warning)
+        window.konfirmasiHapusKeranjang = function(id) {
+            SiprasAlert.fire({
+                title: 'Hapus Alat?',
+                text: 'Alat ini akan dikeluarkan dari daftar keranjangmu.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#ef4444'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('form-delete');
+                    form.action = `/peminjam/keranjang/${id}`;
+                    form.submit();
+                }
+            });
+        }
+
+        // ==========================
         // FLASH MESSAGE (SUCCESS / ERROR)
         // ==========================
         @if (session('success'))
@@ -112,9 +148,12 @@
         @endif
 
         // ==========================
-        // KONFIRMASI HAPUS (Jika ada)
+        // KONFIRMASI HAPUS RIWAYAT (FORM DELETE UMUM)
         // ==========================
         $(document).on('submit', '.form-delete', function (e) {
+            // Jika form delete tidak memiliki action (berarti ditangani konfirmasiHapusKeranjang), abaikan
+            if($(this).attr('action') === "") return;
+
             e.preventDefault();
             let form = this;
 
@@ -134,7 +173,7 @@
         });
 
         // ==========================
-        // KONFIRMASI SIMPAN / AJUKAN
+        // KONFIRMASI SIMPAN / AJUKAN (FORM CONFIRM UMUM)
         // ==========================
         $(document).on('submit', '.form-confirm', function (e) {
             e.preventDefault();

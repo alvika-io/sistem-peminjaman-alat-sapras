@@ -16,7 +16,14 @@ class Peminjaman extends Model
         'user_id',
         'status',
         'tanggal_pinjam',
-        'tanggal_kembali'
+        'tanggal_kembali',
+        'alasan_penolakan' // <--- Tambahkan ini
+    ];
+
+    // Mengatur kolom agar otomatis menjadi objek Carbon (biar gampang diformat di Blade)
+    protected $casts = [
+        'tanggal_pinjam' => 'date',
+        'tanggal_kembali' => 'date',
     ];
 
     // RELASI KE USER

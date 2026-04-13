@@ -15,11 +15,13 @@ use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardControll
 use App\Http\Controllers\Petugas\PeminjamanController as PetugasPeminjamanController;
 use App\Http\Controllers\Petugas\PengembalianController as PetugasPengembalianController;
 use App\Http\Controllers\Petugas\LaporanController;
-use App\Http\Controllers\Petugas\DendaSettingController; // <--- Namespace Baru
+use App\Http\Controllers\Petugas\DendaSettingController;
+use App\Http\Controllers\Petugas\AlasanPenolakanController; // <--- Namespace Baru untuk Alasan
 
 // ================= PEMINJAM =================
 use App\Http\Controllers\Peminjam\DashboardController as PeminjamDashboardController;
 use App\Http\Controllers\Peminjam\PeminjamanController as PeminjamPeminjamanController;
+use App\Http\Controllers\KeranjangController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -101,6 +103,10 @@ Route::middleware(['auth', 'role:petugas'])
 
         Route::put('/pengaturan-denda', [DendaSettingController::class, 'update'])
             ->name('denda.update');
+
+        // ===== MASTER ALASAN PENOLAKAN =====
+        // Menggunakan resource agar otomatis punya route index, store, destroy, dll.
+        Route::resource('alasan-penolakan', AlasanPenolakanController::class);
     });
 
 /*
@@ -125,6 +131,16 @@ Route::middleware(['auth', 'role:peminjam'])
 
         Route::post('/peminjaman', [PeminjamPeminjamanController::class, 'store'])
             ->name('peminjaman.store');
+
+        // ===== KERANJANG =====
+        Route::get('/keranjang', [KeranjangController::class, 'index'])
+            ->name('keranjang.index');
+            
+        Route::post('/keranjang/tambah', [KeranjangController::class, 'store'])
+            ->name('keranjang.store');
+            
+        Route::delete('/keranjang/{keranjang}', [KeranjangController::class, 'destroy'])
+            ->name('keranjang.destroy');
     });
 
 /*
