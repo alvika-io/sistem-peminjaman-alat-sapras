@@ -1,6 +1,3 @@
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-
 <style>
     #sipras-sidebar-peminjam { font-family: 'Instrument Sans', sans-serif; }
     .nav-item-active-peminjam {
@@ -49,19 +46,31 @@
                 </svg>
                 <span>Pinjam Alat</span>
             </a>
+
+            <div class="my-4 border-t border-gray-100 mx-4"></div>
+            
+            <p class="px-4 mb-4 text-[11px] font-black text-gray-300 uppercase tracking-widest">Account</p>
+
+            <a href="{{ route('profile.edit') }}" 
+               class="sidebar-transition flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm {{ request()->routeIs('profile.*') ? 'nav-item-active-peminjam shadow-sm' : 'text-gray-500 hover:text-emerald-600' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span>Profil & Keamanan</span>
+            </a>
         </nav>
     </div>
 
     <div class="p-6 mt-auto">
         <div class="bg-emerald-50/50 rounded-[2rem] p-4 flex items-center gap-3 border border-emerald-100/50">
-            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-white font-black text-xs shadow-sm">
-                {{ substr(auth()->user()->name, 0, 1) }}
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-white font-black text-xs shadow-sm uppercase">
+                {{ substr(auth()->user()->name, 0, 2) }}
             </div>
             <div class="overflow-hidden">
                 <p class="text-[12px] font-black text-gray-800 truncate uppercase tracking-tighter">{{ auth()->user()->name }}</p>
                 <div class="flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest italic">Peminjam</p>
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest italic">Member Aktif</p>
                 </div>
             </div>
         </div>

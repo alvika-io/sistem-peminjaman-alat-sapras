@@ -16,7 +16,7 @@ use App\Http\Controllers\Petugas\PeminjamanController as PetugasPeminjamanContro
 use App\Http\Controllers\Petugas\PengembalianController as PetugasPengembalianController;
 use App\Http\Controllers\Petugas\LaporanController;
 use App\Http\Controllers\Petugas\DendaSettingController;
-use App\Http\Controllers\Petugas\AlasanPenolakanController; // <--- Namespace Baru untuk Alasan
+use App\Http\Controllers\Petugas\AlasanPenolakanController;
 
 // ================= PEMINJAM =================
 use App\Http\Controllers\Peminjam\DashboardController as PeminjamDashboardController;
@@ -105,7 +105,6 @@ Route::middleware(['auth', 'role:petugas'])
             ->name('denda.update');
 
         // ===== MASTER ALASAN PENOLAKAN =====
-        // Menggunakan resource agar otomatis punya route index, store, destroy, dll.
         Route::resource('alasan-penolakan', AlasanPenolakanController::class);
     });
 
@@ -123,6 +122,7 @@ Route::middleware(['auth', 'role:peminjam'])
         Route::get('/dashboard', [PeminjamDashboardController::class, 'index'])
             ->name('dashboard');
 
+        // ===== PEMINJAMAN =====
         Route::get('/peminjaman', [PeminjamPeminjamanController::class, 'index'])
             ->name('peminjaman.index');
 
@@ -138,6 +138,10 @@ Route::middleware(['auth', 'role:peminjam'])
             
         Route::post('/keranjang/tambah', [KeranjangController::class, 'store'])
             ->name('keranjang.store');
+        
+        // ROUTE BARU: Untuk update jumlah via tombol +/- di keranjang
+        Route::post('/keranjang/update-quantity', [KeranjangController::class, 'updateQuantity'])
+            ->name('keranjang.update-quantity');
             
         Route::delete('/keranjang/{keranjang}', [KeranjangController::class, 'destroy'])
             ->name('keranjang.destroy');
